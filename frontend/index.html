@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Listado de visitas</title>
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Registro de Visitas</h1>
+    <div class="actions">
+      <a class="btn" href="nuevaVisita.html">+ Nueva visita</a>
+      <button id="btnRefresh" class="btn">Actualizar</button>
+    </div>
+
+    <table id="visitasTable">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Fecha inicio</th>
+          <th>Fecha fin</th>
+          <th>Nombre visita</th>
+          <th>Aspecto</th>
+          <th>Actividad</th>
+          <th>Plazo</th>
+          <th>Responsable</th>
+          <th>Evidencia</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+  </div>
+
+  <script src="js/visitas.js"></script>
+  <script>fetchAndRender(); document.getElementById('btnRefresh').addEventListener('click', fetchAndRender);</script>
+</body>
+</html>

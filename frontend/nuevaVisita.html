@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Nueva Visita</title>
+  <link rel="stylesheet" href="css/estilos.css">
+  <script src="js/visitas.js"></script>
+</head>
+<body onload="loadAspectos(); loadResponsables();">
+  <h1>Registrar Visita</h1>
+  <form id="visitaForm" onsubmit="submitForm(event)">
+    <label>Nombre visita:</label>
+    <input type="text" name="nombre_visita" required><br>
+
+    <label>Fecha inicio:</label>
+    <input type="date" name="fecha_inicio"><br>
+
+    <label>Fecha fin:</label>
+    <input type="date" name="fecha_fin"><br>
+
+    <label>Aspecto:</label>
+    <select id="aspectoSelect" name="aspecto_id"></select><br>
+
+    <label>Responsable:</label>
+    <select id="responsableSelect" name="responsable_id"></select><br>
+
+    <label>Actividad:</label>
+    <input type="text" name="actividad"><br>
+
+    <label>Observación:</label>
+    <textarea name="observacion"></textarea><br>
+
+    <label>Estado:</label>
+    <input type="text" name="estado"><br>
+
+    <label>Evidencia (imagen):</label>
+    <input type="file" name="evidencia" accept="image/*"><br><br>
+
+    <button type="submit">Guardar</button>
+  </form>
+</body>
+</html>
