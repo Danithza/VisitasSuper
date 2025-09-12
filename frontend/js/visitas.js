@@ -8,25 +8,42 @@ async function fetchAndRender() {
     const tbody = document.querySelector('#visitasTable tbody');
     if (!tbody) return;
     tbody.innerHTML = '';
+
+    // Agrupar visitas por aspecto
+    const grupos = {};
     data.forEach(v => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${v.id}</td>
-        <td>${v.fecha_inicio ?? ''}</td>
-        <td>${v.fecha_fin ?? ''}</td>
-        <td>${v.nombre_visita ?? ''}</td>
-        <td>${v.aspecto ?? ''}</td>
-        <td>${v.actividad ?? ''}</td>
-        <td>${v.plazo_fecha ?? ''}</td>
-        <td>${v.responsable ?? ''}</td>
-        <td>
-          ${v.evidencia 
-            ? `<img src="${UPLOADS_BASE}${v.evidencia}" width="80" alt="Evidencia">`
-            : 'Sin imagen'}
-        </td>
-        <td>${v.estado ?? ''}</td>
-      `;
-      tbody.appendChild(tr);
+      const aspecto = v.aspecto || 'Sin aspecto';
+      if (!grupos[aspecto]) grupos[aspecto] = [];
+      grupos[aspecto].push(v);
+    });
+
+    // Renderizar cada grupo
+    Object.entries(grupos).forEach(([aspecto, visitas]) => {
+      // Fila separadora con el nombre del aspecto
+      const trAspecto = document.createElement('tr');
+      trAspecto.innerHTML = `<td colspan="9" style="background:#dbeafe;font-weight:bold;text-align:center;border-top:2px solid #333;">${aspecto}</td>`;
+      tbody.appendChild(trAspecto);
+
+      // Filas de visitas bajo ese aspecto
+      visitas.forEach(v => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${v.id}</td>
+          <td>${v.fecha_inicio ?? ''}</td>
+          <td>${v.fecha_fin ?? ''}</td>
+          <td>${v.nombre_visita ?? ''}</td>
+          <td>${v.actividad ?? ''}</td>
+          <td>${v.plazo_fecha ?? ''}</td>
+          <td>${v.responsable ?? ''}</td>
+          <td>
+            ${v.evidencia 
+              ? `<img src="${UPLOADS_BASE}${v.evidencia}" width="80" alt="Evidencia">`
+              : 'Sin imagen'}
+          </td>
+          <td>${v.estado ?? ''}</td>
+        `;
+        tbody.appendChild(tr);
+      });
     });
   } catch (err) {
     alert('Error al obtener visitas: ' + err);
