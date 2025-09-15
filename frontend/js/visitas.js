@@ -1,5 +1,5 @@
-const API_BASE = 'http://localhost/VisitasSuper/backend/index.php';
-const UPLOADS_BASE = 'http://localhost/VisitasSuper/backend/uploads/'; // 🔹 base absoluta para imágenes
+const API_BASE = 'http://localhost/VisitasSuper/backend/index.php?resource=visitas';
+const UPLOADS_BASE = 'http://localhost/VisitasSuper/backend/uploads/';
 
 async function fetchAndRender() {
   try {
@@ -19,14 +19,19 @@ async function fetchAndRender() {
 
     // Renderizar cada grupo
     Object.entries(grupos).forEach(([aspecto, visitas]) => {
-      // Fila separadora con el nombre del aspecto
       const trAspecto = document.createElement('tr');
-      trAspecto.innerHTML = `<td colspan="9" style="background:#dbeafe;font-weight:bold;text-align:center;border-top:2px solid #333;">${aspecto}</td>`;
+      trAspecto.className = 'aspecto-header';
+      trAspecto.innerHTML = `<td colspan="9">${aspecto}</td>`;
       tbody.appendChild(trAspecto);
 
-      // Filas de visitas bajo ese aspecto
       visitas.forEach(v => {
         const tr = document.createElement('tr');
+        const estadoClass = v.estado === 'Completado' ? 'estado-completado' : 
+                           v.estado === 'Pendiente' ? 'estado-pendiente' : '';
+
+        // Limpia prefijos "uploads/"
+        const fileName = v.evidencia ? v.evidencia.replace(/^uploads[\\/]/, '') : null;
+
         tr.innerHTML = `
           <td>${v.id}</td>
           <td>${v.fecha_inicio ?? ''}</td>
@@ -36,11 +41,11 @@ async function fetchAndRender() {
           <td>${v.plazo_fecha ?? ''}</td>
           <td>${v.responsable ?? ''}</td>
           <td>
-            ${v.evidencia 
-              ? `<img src="${UPLOADS_BASE}${v.evidencia}" width="80" alt="Evidencia">`
-              : 'Sin imagen'}
+            ${fileName 
+              ? `<img src="${UPLOADS_BASE}${fileName}" width="80" height="60" alt="Evidencia">`
+              : '<span class="sin-imagen">Sin imagen</span>'}
           </td>
-          <td>${v.estado ?? ''}</td>
+          <td class="${estadoClass}">${v.estado ?? ''}</td>
         `;
         tbody.appendChild(tr);
       });
@@ -50,60 +55,7 @@ async function fetchAndRender() {
   }
 }
 
-async function loadAspectos() {
-  try {
-    const res = await fetch(`${API_BASE}?resource=aspectos`);
-    const data = await res.json();
-    const sel = document.getElementById('aspectoSelect');
-    if (!sel) return;
-    sel.innerHTML = '<option value="">-- seleccionar --</option>';
-    data.forEach(a => {
-      const o = document.createElement('option');
-      o.value = a.id;
-      o.textContent = a.descripcion;
-      sel.appendChild(o);
-    });
-  } catch (err) {
-    console.error(err);
-  }
-}
-
-async function loadResponsables() {
-  try {
-    const res = await fetch(`${API_BASE}?resource=responsables`);
-    const data = await res.json();
-    const sel = document.getElementById('responsableSelect');
-    if (!sel) return;
-    sel.innerHTML = '<option value="">-- seleccionar --</option>';
-    data.forEach(r => {
-      const o = document.createElement('option');
-      o.value = r.id;
-      o.textContent = `${r.nombre} (${r.correo})`;
-      sel.appendChild(o);
-    });
-  } catch (err) {
-    console.error(err);
-  }
-}
-
-async function submitForm(e) {
-  e.preventDefault();
-  const form = e.target;
-  const formData = new FormData(form);
-
-  try {
-    const res = await fetch(`${API_BASE}?resource=visitas`, {
-      method: 'POST',
-      body: formData // 🔹 enviamos todo el form, incluida la imagen
-    });
-    const data = await res.json();
-    if (res.ok) {
-      alert(data.message || 'Guardado');
-      window.location.href = 'index.html';
-    } else {
-      alert('Error: ' + JSON.stringify(data));
-    }
-  } catch (err) {
-    alert('Error al guardar: ' + err);
-  }
-}
+document.addEventListener('DOMContentLoaded', function() {
+  fetchAndRender();
+  document.getElementById('btnRefresh').addEventListener('click', fetchAndRender);
+});

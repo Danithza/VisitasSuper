@@ -33,7 +33,22 @@ function handleVisitas() {
 
 function getAllVisitas() {
     global $conexion;
-    $sql = "SELECT v.*, a.descripcion AS aspecto, r.nombre AS responsable, r.correo
+    $sql = "SELECT 
+                v.id,
+                v.fecha_inicio,
+                v.fecha_fin,
+                v.nombre_visita,
+                v.aspecto_id,
+                a.descripcion AS aspecto,
+                v.observacion,
+                v.recurrente,
+                v.plazo_fecha,
+                v.actividad,
+                v.responsable_id,
+                r.nombre AS responsable,
+                r.correo,
+                v.estado,
+                v.evidencia
             FROM visitas v
             LEFT JOIN aspectos a ON v.aspecto_id = a.id
             LEFT JOIN responsables r ON v.responsable_id = r.id
