@@ -1,0 +1,90 @@
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #3498db;
+    --accent-color: #e74c3c;
+    --light-color: #ecf0f1;
+    --success-color: #27ae60;
+    --warning-color: #f39c12;
+}
+
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.header {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    padding: 1.5rem 0;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.card-custom {
+    border-radius: 10px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: none;
+    margin-bottom: 20px;
+}
+
+.card-custom:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+}
+
+.btn-primary {
+    background-color: var(--secondary-color);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
+.table th {
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 600;
+    vertical-align: middle;
+}
+
+.badge-status {
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+.evidence-preview {
+    max-width: 100px;
+    max-height: 100px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+.evidence-preview:hover {
+    transform: scale(1.8);
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    z-index: 100;
+}
+
+.filter-section {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+.page-title {
+    color: var(--primary-color);
+    font-weight: 700;
+    border-left: 5px solid var(--secondary-color);
+    padding-left: 15px;
+    margin: 0 0 20px 0;
+}

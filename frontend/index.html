@@ -1,103 +1,114 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8">
-  <title>Listado de visitas</title>
-  <link rel="stylesheet" href="css/estilos.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestión de Visitas/Auditorías</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <div class="container">
-    <h1>Registro de Visitas</h1>
-    <div class="actions">
-      <a class="btn" href="nuevaVisita.html">+ Nueva visita</a>
-      <button id="btnRefresh" class="btn">Actualizar</button>
+    <div class="header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h1><i class="fas fa-clipboard-list me-3"></i>Sistema de Gestión de Visitas</h1>
+                    <p class="mb-0">Supervisión de Transporte - Registro de Auditorías</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <span class="badge bg-light text-dark p-2"><i class="fas fa-user me-2"></i>Usuario: Admin</span>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <table id="visitasTable">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Fecha inicio</th>
-          <th>Fecha fin</th>
-          <th>Nombre visita</th>
-          <th>Actividad</th>
-          <th>Plazo</th>
-          <th>Responsable</th>
-          <th>Evidencia</th>
-          <th>Estado</th>
-          <th>Recurrente</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Los datos se cargarán aquí mediante JavaScript -->
-      </tbody>
-    </table>
-  </div>
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <h2 class="page-title">Registro de Visitas y Auditorías</h2>
+            </div>
+            <div class="col-md-4 text-end">
+                <a href="visitas_nueva.php" class="btn btn-primary">
+                    <i class="fas fa-plus-circle me-2"></i>Nueva Visita
+                </a>
+            </div>
+        </div>
 
-  <script>
-    const API_BASE = 'http://localhost/VisitasSuper/backend/index.php';
-    const UPLOADS_BASE = 'http://localhost/VisitasSuper/backend/uploads/';
+        <!-- Filtros -->
+        <div class="filter-section">
+            <div class="row">
+                <div class="col-md-3 mb-2">
+                    <label for="fechaFilter" class="form-label">Filtrar por fecha:</label>
+                    <input type="date" class="form-control" id="fechaFilter">
+                </div>
+                <div class="col-md-3 mb-2">
+                    <label for="estadoFilter" class="form-label">Filtrar por estado:</label>
+                    <select class="form-select" id="estadoFilter">
+                        <option value="">Todos los estados</option>
+                        <option value="cumple">Cumple</option>
+                        <option value="no cumple">No Cumple</option>
+                        <option value="parcial">Parcial</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <label for="aspectoFilter" class="form-label">Filtrar por aspecto:</label>
+                    <select class="form-select" id="aspectoFilter">
+                        <option value="">Todos los aspectos</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <label for="search" class="form-label">Buscar:</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Buscar..." id="search">
+                        <button class="btn btn-outline-secondary" type="button">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    async function fetchAndRender() {
-      try {
-        const res = await fetch(`${API_BASE}?resource=visitas`);
-        const data = await res.json();
-        const tbody = document.querySelector('#visitasTable tbody');
-        if (!tbody) return;
-        tbody.innerHTML = '';
+        <!-- Tabla -->
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Fechas</th>
+                        <th>Nombre de la Visita</th>
+                        <th>Aspecto Verificado</th>
+                        <th>Descripción del Aspecto</th>
+                        <th>Observaciones</th>
+                        <th>Estado</th>
+                        <th>Plazo</th>
+                        <th>Recurrente</th>
+                        <th>Plan de Acción</th>
+                        <th>Responsable</th>
+                        <th>Evidencia</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="visitasTableBody">
+                    <tr>
+                        <td colspan="12" class="text-center">Cargando datos...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
-        // Agrupar visitas por aspecto
-        const grupos = {};
-        data.forEach(v => {
-          const aspecto = v.aspecto || 'Sin aspecto';
-          if (!grupos[aspecto]) grupos[aspecto] = [];
-          grupos[aspecto].push(v);
-        });
+        <!-- Paginación -->
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center" id="pagination"></ul>
+        </nav>
+    </div>
 
-        // Renderizar cada grupo
-        Object.entries(grupos).forEach(([aspecto, visitas]) => {
-          // Fila separadora con el nombre del aspecto (SOLO UNA VEZ)
-          const trAspecto = document.createElement('tr');
-          trAspecto.className = 'aspecto-header';
-          trAspecto.innerHTML = `<td colspan="9">${aspecto}</td>`;
-          tbody.appendChild(trAspecto);
+    <footer class="bg-dark text-white text-center py-3 mt-5">
+        <div class="container">
+            <p class="mb-0">Sistema de Gestión de Visitas - Supervisión de Transporte © 2025</p>
+        </div>
+    </footer>
 
-          // Filas de visitas bajo ese aspecto
-          visitas.forEach(v => {
-            const tr = document.createElement('tr');
-            
-            // Aplicar clase según el estado
-            const estadoClass = v.estado === 'Completado' ? 'estado-completado' : 
-                               v.estado === 'Pendiente' ? 'estado-pendiente' : '';
-            
-            tr.innerHTML = `
-              <td>${v.id}</td>
-              <td>${v.fecha_inicio ?? ''}</td>
-              <td>${v.fecha_fin ?? ''}</td>
-              <td>${v.nombre_visita ?? ''}</td>
-              <td>${v.actividad ?? ''}</td>
-              <td>${v.plazo_fecha ?? ''}</td>
-              <td>${v.responsable ?? ''}</td>
-              <td>
-                ${v.evidencia 
-                  ? `<img src="${UPLOADS_BASE}${v.evidencia}" width="80" height="60" alt="Evidencia">`
-                  : '<span class="sin-imagen">Sin imagen</span>'}
-              </td>
-              <td class="${estadoClass}">${v.estado ?? ''}</td>
-            `;
-            tbody.appendChild(tr);
-          });
-        });
-      } catch (err) {
-        alert('Error al obtener visitas: ' + err);
-      }
-    }
-
-    // Inicializar
-    document.addEventListener('DOMContentLoaded', function() {
-      fetchAndRender();
-      document.getElementById('btnRefresh').addEventListener('click', fetchAndRender);
-    });
-  </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/index.js"></script>
 </body>
 </html>

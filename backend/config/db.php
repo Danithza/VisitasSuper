@@ -2,12 +2,11 @@
 $servername = "127.0.0.1";  
 $username   = "root";
 $password   = "";
-$dbname     = "visitassuper";
+$dbname     = "visitassuper"; // ⚠️ ojo al nombre, en tu screenshot se ve "visitassuper"
 $port       = 3307;
 
-$conexion = new mysqli($servername, $username, $password, $dbname, $port);
+$db = new mysqli($servername, $username, $password, $dbname, $port);
 
-if ($conexion->connect_error) {
-    die("❌ Conexión fallida: " . $conexion->connect_error);
+if ($db->connect_error) {
+    die("❌ Conexión fallida: " . $db->connect_error);
 }
-?>
